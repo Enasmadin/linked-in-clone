@@ -1,9 +1,15 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import styled from "styled-components"
+import { SignInApi } from '../redux/actions';
 
-function Login() {
+function Login(props) {
+     console.log(props.user)
+    const navigate = useNavigate();
   return (
    <Container>
+    {props.user && navigate("/home")}
     <Nav>
         <a href='/index.html'>
            <img src="/images/login-logo.svg" alt=""/>
@@ -19,8 +25,8 @@ function Login() {
             <img  src= "/images/login-hero.svg"/>
         </Hero>
         <Form>
-            <Google>
-                <img src='/images/google.svg' alt=""/>
+            <Google  onClick ={()=> props.SignIn()}>
+                <img src='/images/google.svg' alt="" />
                  sign in with Google 
             </Google>
         </Form>
@@ -52,8 +58,6 @@ const Nav = styled.nav`
 `;
 const  Join = styled.a`
 font-size:16px;
-// padding:10px 12px ;
-// padding: 5px 24px ;
 text-decrotion:none;
 border-radius:4px;
 color:rgba(0,0,0,0.6);
@@ -168,5 +172,18 @@ border: none;
 
 
 ` ;
+// it is one method to get state 
 
-export default Login
+const mapStateToProps=(state)=>{
+    return{
+        user:state.userState.user,
+    }
+}
+const mapDispatchToProps=(dispatch)=>{
+    return{
+        SignIn:()=>dispatch(SignInApi())
+        
+    }
+}
+
+export default connect( mapStateToProps,mapDispatchToProps)(Login);
