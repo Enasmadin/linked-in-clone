@@ -6,3 +6,14 @@ export const setUser =(payload)=>{
         user:payload
     }
 }
+
+export const setLoading =(status)=>({
+
+   type:actions.SET_LOADING_STATUS,
+   status:status,
+});
+
+export const getArticales=(payload)=>({
+    type:actions.GET_ARTICELS,
+    payload:payload
+})

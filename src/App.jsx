@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router , Routes, Route } from "react-router-dom";
+import {  Routes, Route } from "react-router-dom";
 import Login from './components/Login';
 import {  connect } from 'react-redux';
 
@@ -17,7 +17,7 @@ function App(props) {
   return (
     
     <div className='app'>
-      <Router>
+     
         <Routes>
         <Route path='/'  element={<Login/>}/>
 
@@ -31,7 +31,7 @@ function App(props) {
        
       }/>
         </Routes>
-      </Router>
+     
         
     </div>
 
