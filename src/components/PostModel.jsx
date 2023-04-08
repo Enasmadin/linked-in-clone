@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import ReactPlayer from 'react-player';
 import styled from 'styled-components';
+import {  postArticleAPI } from '../redux/actions';
+import { Timestamp } from 'firebase/firestore';
 
 const PostModel = (props) => {
     const [editorText,setEditorText]=useState("");
     const [assetArea,setAssetArea]=useState("");
     const [shareImage,setShareImage]=useState("");
     const [videLink,setVideLink]=useState("");
+ 
     const handelChange = (e)=>{
         // to get the current image 
     const image = e.target.files[0];
@@ -25,7 +28,23 @@ const PostModel = (props) => {
         setShareImage("");
         setAssetArea(area) ;
     };
-    const reset =(e)=>{
+ 
+    const handelPostArticale = (e)=>{
+        e.preventDefault();
+        if(e.target !== e.currentTarget){
+         return;
+        }
+        const payload= {
+         image:shareImage,
+         video:videLink,
+         user:props.user,
+         description:editorText,
+         timestamp:Timestamp.now()
+        };
+       props.postArticales(payload)
+        reset(e);
+     }
+     const reset =(e)=>{
         setEditorText("") 
         setAssetArea("") 
         setShareImage("")
@@ -73,14 +92,14 @@ const PostModel = (props) => {
                                 Select an Image to share 
                             </label>
                         </p>
-                        {shareImage && (<img src={URL.createObjectURL(shareImage)} alt="img"/>)} 
+                        {shareImage && (<img src={URL.createObjectURL(shareImage)} alt="img" style={{ height:"50px" }}/>)} 
                       </UploadeImage>
                 
                     )
                     :assetArea==="media" && (
                     <>
                       <input type="text" value={videLink} onChange={(e)=>setVideLink(e.target.value)} placeholder='Please input a video link'  style={{ width:"100%" ,height:"30px" }}/>
-                      <ReactPlayer width="100%"   url={videLink} />
+                      <ReactPlayer width="100%"  height="100px"  url={videLink} />
                    </>)
                 }
             </Editor>
@@ -100,7 +119,7 @@ const PostModel = (props) => {
                     Anayone
                 </AssetButton> 
             </ShareComment>
-            <PostButton disabled={!editorText?true:false}>
+            <PostButton disabled={!editorText?true:false} onClick={(e)=>handelPostArticale(e)}>
                 post 
             </PostButton>
 
@@ -207,6 +226,8 @@ height:30px;
 const AssetButton = styled.button`
 height:40px;
 min-width:auto;
+padding:16px;
+align-items:center;
 color:rgba(0,0,0,0.6);
 font-weight:500;
 font-size:14px;
@@ -246,8 +267,8 @@ const ShareComment = styled.div`
 `;
 const PostButton= styled.button`
 min-width:60px;
-padding-left:16px;
-padding-right:16px;
+padding:16px;
+align-items:center;
 background:${(props)=>(props.disabled? "rgb(235,235,235)" :"#0a66c2")};
 color:${(props)=> (props.disabled? "rgb(0,0,0,0.25)":"white")};
 cursor:${(props)=>{props.disabled? "not-allowed" :"pointer"}};
@@ -281,6 +302,11 @@ const mapStateToProps=(state)=>{
     return{
         user:state.userState.user,
     }
-  }
+}
+const mapDispatchToProps=(dispatch)=>{
+    return{
+        postArticales:(payload)=> dispatch(postArticleAPI(payload))
+    }
+}
 
-export default connect (mapStateToProps)(PostModel) 
+export default connect (mapStateToProps,mapDispatchToProps)(PostModel) 
