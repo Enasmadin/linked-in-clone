@@ -2,7 +2,7 @@ import { auth,provider,storage,db} from "../../firebase";
 import { signInWithPopup, signOut } from "firebase/auth";
 import * as actions from "./actions"
 
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 export function SignInApi() {
@@ -43,7 +43,7 @@ export function postArticleAPI(payload) {
        // to change the image when want 
        UploadRef.on("state_changed",(snapshot)=>{
          const progress= Math.round(snapshot.bytesTransferred / snapshot.totalBytes) *100;
-         console.log("Upload is " + progress + "% done")
+         // console.log("Upload is " + progress + "% done")
        },
        (error)=>
        {alert(error)},
@@ -65,9 +65,10 @@ export function postArticleAPI(payload) {
                shareImg:downLoadUrl
             })
          })
+         dispatch(actions.setLoading(false));
        });
 
-       dispatch(actions.setLoading(false));
+      
     }
     else if (payload.video){
       const colRef= collection(db,"articales");
@@ -102,4 +103,18 @@ export function postArticleAPI(payload) {
       dispatch(actions.setLoading(false));
     }
    }
+}
+
+export function getArticalApi() {
+   return(dispatch)=>{
+      let payload;
+      const colRef = collection(db,"articales");
+      const orderRef=query(colRef,orderBy("actor.date","desc"));
+      onSnapshot(orderRef, (snapshot)=>{
+         payload=snapshot.docs.map((doc)=>doc.data());
+         dispatch(actions.getArticales(payload));
+      })
+
+   }
+   
 }

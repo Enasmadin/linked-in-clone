@@ -1,15 +1,22 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components';
 import PostModel from './PostModel';
 import ReactPlayer from 'react-player';
+import { getArticalApi } from '../redux/actions';
 
 const Main = (props) => {
   const[showModel,setShowModel]=useState(false);
   const handelClick = ()=>{
     setShowModel(!showModel)
   } 
+  // console.log(props.articales.length)
+
+  useEffect(()=> {
+    props.getArticales()
+  },[])
+
   return (
     <Container>
       <SharBox>
@@ -40,10 +47,11 @@ const Main = (props) => {
       </SharBox>
      
       {
-        props.articales.lenghth === 0? (<p>There are no articales </p>):(
+        props.articales.length === 0? (<p>There are no articales </p>):(
           <Content>
             {props.loading && <img  src="/images/loader.svg" alt=""/> }
-            {props.articales.lenghth > 0 && props.articales.map((artical,index)=>(
+           
+            { props.articales.length > 0 && props.articales.map((artical,index)=>(
              <Article key={index}>
               <ShareActor>
                 <a>
@@ -67,8 +75,14 @@ const Main = (props) => {
               <SocialCounts>
                 <li>
                 <button>
-                  <img  src="https://static-exp1.licdn.com/sc/h/2uxqgankkcxm505qn812vqyss" alt=""/>
-                  <img   src="https://static-exp1.licdn.com/sc/h/f58e354mjsjpdd67eq51cuh49" alt=""/>
+                <img
+                        src="https://static-exp1.licdn.com/sc/h/2uxqgankkcxm505qn812vqyss"
+                        alt=""
+                      />
+                      <img
+                        src="https://static-exp1.licdn.com/sc/h/f58e354mjsjpdd67eq51cuh49"
+                        alt=""
+                      />
                   <span> 75 </span>
                 </button>
                 </li>
@@ -98,7 +112,8 @@ const Main = (props) => {
                 </button>
               </SocialActions>
              </Article>
-            )) }
+            )) } 
+          
           </Content>
         )
       }
@@ -193,7 +208,7 @@ div{
 `
 const  Content = styled.div`
 text-align:center;
-a > img {
+a>img {
   width:70px; 
 }
 `;
@@ -262,6 +277,18 @@ img{
   height:100%;
 }
 `
+const SharedImg = styled.div`
+  margin-top: 8px;
+  width: 100%;
+  diplay: block;
+  position: relative;
+  background-color: #f9fafb;
+  img {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+  }
+`;
 const SocialCounts = styled.ul`
 line-height:1.3;
 display:flex;
@@ -324,9 +351,16 @@ const mapStateToProps=(state)=>{
   return{
       user:state.userState.user,
       loading:state.articalState.loading,
-      articales:state.articalState.articales,
+      articales:state.articalState.articales
+     
   }
  
 }
+const  mainDispatchToProps=(dispatch)=>{
+  return{
+    getArticales:()=> dispatch(getArticalApi())
+  }
 
-export default  connect (mapStateToProps) (Main)
+}
+
+export default  connect (mapStateToProps,mainDispatchToProps) (Main)

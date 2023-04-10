@@ -206,10 +206,14 @@ const NavList = styled.li`
 }
 `;
 const SignOut = styled(NavList)`
-// @media (max-width:575px){
-//     position: relative;
+@media (max-width:767px){
+    position: absoulate;
+    top:-45px;
+    right:15px;
+    background:#eee;
 
-// }
+
+}
 position: absolute;
 top:45px;
 background:white;
